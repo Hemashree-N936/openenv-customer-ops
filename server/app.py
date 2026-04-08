@@ -10,13 +10,15 @@ app = FastAPI()
 env = CustomerOpsEnv()
 
 
+# ✅ RESET REQUEST
 class ResetRequest(BaseModel):
     difficulty: Optional[str] = "hard"
 
 
+# ✅ STEP REQUEST (validator expects int)
 class StepRequest(BaseModel):
     action_type: str
-    ticket_id: int
+    ticket_id: int   # MUST be int for validator
     message: str
 
 
@@ -33,9 +35,12 @@ async def reset(req: ResetRequest = ResetRequest()):
 
 @app.post("/step")
 async def step(req: StepRequest):
+    # 🔥 FIX: convert int → "T1"
+    ticket_id_str = f"T{req.ticket_id}"
+
     action = Action(
         action_type=req.action_type,
-        ticket_id=req.ticket_id,
+        ticket_id=ticket_id_str,   # env expects string
         message=req.message
     )
 
@@ -48,11 +53,11 @@ async def step(req: StepRequest):
     }
 
 
-# ✅ REQUIRED main() FUNCTION
+# ✅ REQUIRED main() for OpenEnv
 def main():
     uvicorn.run("server.app:app", host="0.0.0.0", port=7860)
 
 
-# ✅ REQUIRED ENTRY POINT
+# ✅ REQUIRED entrypoint
 if __name__ == "__main__":
     main()
