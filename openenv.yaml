@@ -1,0 +1,11 @@
+name: customer-ops-env
+version: 1.0
+
+entrypoint: env.environment:CustomerOpsEnv
+
+description: Multi-ticket customer operations simulation environment
+
+tasks:
+  - easy
+  - medium
+  - hard
