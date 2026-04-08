@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from typing import Optional
 from env.environment import CustomerOpsEnv
 from env.models import Action
+import uvicorn
 
 app = FastAPI()
 
@@ -9,17 +11,17 @@ env = CustomerOpsEnv()
 
 
 class ResetRequest(BaseModel):
-    difficulty: str = "hard"
+    difficulty: Optional[str] = "hard"
 
 
 class StepRequest(BaseModel):
     action_type: str
-    ticket_id: str   # IMPORTANT: string, not int
+    ticket_id: int
     message: str
 
 
 @app.post("/reset")
-async def reset(req: ResetRequest):
+async def reset(req: ResetRequest = ResetRequest()):
     result = await env.reset(req.difficulty)
 
     return {
@@ -46,6 +48,11 @@ async def step(req: StepRequest):
     }
 
 
-@app.get("/")
-def home():
-    return {"status": "running"}
+# ✅ REQUIRED main() FUNCTION
+def main():
+    uvicorn.run("server.app:app", host="0.0.0.0", port=7860)
+
+
+# ✅ REQUIRED ENTRY POINT
+if __name__ == "__main__":
+    main()

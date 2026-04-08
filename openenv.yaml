@@ -1,11 +1,8 @@
-name: customer-ops-env
+name: OpenEnvCustomerOps
 version: 1.0
-
-entrypoint: env.environment:CustomerOpsEnv
-
-description: Multi-ticket customer operations simulation environment
+entry_point: inference.py
 
 tasks:
-  - easy
-  - medium
-  - hard
+  - name: easy
+  - name: medium
+  - name: hard
