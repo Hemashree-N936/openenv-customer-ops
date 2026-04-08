@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from env.environment import CustomerOpsEnv
 from env.models import Action
-import asyncio
 
 app = FastAPI()
 
@@ -15,7 +14,7 @@ class ResetRequest(BaseModel):
 
 class StepRequest(BaseModel):
     action_type: str
-    ticket_id: int
+    ticket_id: str   # IMPORTANT: string, not int
     message: str
 
 
@@ -45,3 +44,8 @@ async def step(req: StepRequest):
         "reward": result.reward,
         "done": result.done,
     }
+
+
+@app.get("/")
+def home():
+    return {"status": "running"}
