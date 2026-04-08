@@ -1,3 +1,12 @@
+---
+title: OpenEnv Customer Ops
+emoji: 🤖
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_port: 7860
+---
+
 # 🚀 OpenEnv Customer Operations Environment
 
 ## 📌 Overview
