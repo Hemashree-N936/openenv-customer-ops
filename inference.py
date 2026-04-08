@@ -1,54 +1,29 @@
-import asyncio
-from env.environment import CustomerOpsEnv
-from env.models import Action
-from env.grader import grade_performance
+# inference.py
+from fastapi import FastAPI
+from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
-MAX_STEPS = 5
-MAX_TOTAL_REWARD = 5.0
+app = FastAPI()
 
+# Allow Hugging Face to call endpoints
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-async def main():
-    env = await CustomerOpsEnv.from_docker_image("customer-ops-env")
+class ResetRequest(BaseModel):
+    pass
 
-    result = await env.reset("hard")
-    obs = result.observation
-
-    total_reward = 0
-
-    for step in range(MAX_STEPS):
-
-        ticket = sorted(
-            obs.tickets,
-            key=lambda t: (t.priority == "high", t.time_waiting),
-            reverse=True
-        )[0]
-
-        action = Action(
-            action_type="respond",
-            ticket_id=ticket.id,
-            message="Sorry for the inconvenience. We will resolve it quickly."
-        )
-
-        result = await env.step(action)
-
-        print(f"Step {step+1}, Reward: {result.reward:.2f}")
-
-        total_reward += result.reward
-        obs = result.observation
-
-        if result.done:
-            break
-
-    score = total_reward / MAX_TOTAL_REWARD
-    score = min(max(score, 0.0), 1.0)
-
-    grader_score = grade_performance(obs.tickets)
-
-    print("\nFinal Score (0-1):", round(score, 2))
-    print("Grader Score:", grader_score)
-
-    await env.close()
-
+@app.post("/reset")
+async def reset(req: ResetRequest):
+    return {
+        "observation": {"echoed_message": "Hello, World!"},
+        "reward": 0.0,
+        "done": False
+    }
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=7860)
