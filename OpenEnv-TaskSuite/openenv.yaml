@@ -1,0 +1,11 @@
+name: OpenEnvTaskSuite
+version: "1.0"
+description: Real-world multi-task environment (email, data, scheduling)
+
+tasks:
+  - name: email_triage
+    difficulty: easy
+  - name: data_cleaning
+    difficulty: medium
+  - name: meeting_scheduling
+    difficulty: hard
